@@ -62,6 +62,7 @@ class NiceToHave(BaseModel):
     lifestyle_preferences: Optional[List[str]] = None
 
 class Candidate(BaseModel):
+    source: Optional[str] = None  # To track the origin of the data
     """מועמד/ת לשידוך"""
     id: str = Field(..., description="מזהה ייחודי")
     gender: Gender

@@ -52,7 +52,37 @@ ranker = MatchingRanker()
 stable_matcher = StableMatching()
 
 # מאגרי נתונים זמניים (בפרודקשן - להחליף בבסיס נתונים)
+import pandas as pd
+
 candidates_db: Dict[str, Candidate] = {}
+
+@app.on_event("startup")
+async def startup_event():
+    """טעינת נתונים ראשונית"""
+    try:
+        df = pd.read_csv("data/unified_candidates.csv")
+        for _, row in df.iterrows():
+            candidate = Candidate(
+                id=row["id"],
+                gender=row["gender"],
+                age=row["age"],
+                marital_status=row["marital_status"],
+                community=row["community"],
+                religiosity_level=row["religiosity_level"],
+                location=row["location"],
+                education=row["education"],
+                occupation=row["occupation"],
+                description_text=row["description_text"],
+                languages=row["languages"].split(",") if isinstance(row["languages"], str) else ["hebrew"],
+                smoking=row["smoking"],
+                source=row["source"]
+            )
+            candidates_db[candidate.id] = candidate
+        logger.info(f"Loaded {len(candidates_db)} candidates from unified_candidates.csv")
+    except FileNotFoundError:
+        logger.warning("unified_candidates.csv not found. Starting with an empty database.")
+    except Exception as e:
+        logger.error(f"Failed to load initial data: {e}")
 preferences_db: Dict[str, Preferences] = {}
 feedback_db: List[Feedback] = []
 
