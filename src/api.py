@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
+from src.translation_maps import GENDER_MAP, MARITAL_STATUS_MAP, COMMUNITY_MAP, RELIGIOSITY_LEVEL_MAP, EDUCATION_MAP
 from src.data_schemas import (
     Candidate, Preferences, MatchRequest, MatchResponse, 
     MatchScore, Feedback, FeedbackStatus
@@ -63,19 +64,19 @@ async def startup_event():
         df = pd.read_csv("data/unified_candidates.csv")
         for _, row in df.iterrows():
             candidate = Candidate(
-                id=row["id"],
-                gender=row["gender"],
-                age=row["age"],
-                marital_status=row["marital_status"],
-                community=row["community"],
-                religiosity_level=row["religiosity_level"],
-                location=row["location"],
-                education=row["education"],
-                occupation=row["occupation"],
-                description_text=row["description_text"],
-                languages=row["languages"].split(",") if isinstance(row["languages"], str) else ["hebrew"],
-                smoking=row["smoking"],
-                source=row["source"]
+                id=row["מזהה"],
+                gender=GENDER_MAP.get(row["מין"], "M"),
+                age=int(row["גיל_נומרי"]) if pd.notna(row["גיל_נומרי"]) and row["גיל_נומרי"] >= 18 else 18,
+                marital_status=MARITAL_STATUS_MAP.get(row["סטטוס משפחתי"], "single"),
+                community=COMMUNITY_MAP.get(row["מגזר"], "sephardic"),
+                religiosity_level=RELIGIOSITY_LEVEL_MAP.get(row["מגזר דתי"], "strict"),
+                location=str(row["עיר"]) if pd.notna(row["עיר"]) else "",
+                education=EDUCATION_MAP.get(row["ישיבה/סמינר"], "yeshiva"),
+                occupation=str(row["עיסוק"]) if pd.notna(row["עיסוק"]) else "",
+                description_text=str(row["הערות"]) if pd.notna(row["הערות"]) else "",
+                languages=row["שפות"].split(",") if "שפות" in row and isinstance(row["שפות"], str) else ["hebrew"],
+                smoking=False,
+                source=row["מקור_קובץ"]
             )
             candidates_db[candidate.id] = candidate
         logger.info(f"Loaded {len(candidates_db)} candidates from unified_candidates.csv")
@@ -84,6 +85,22 @@ async def startup_event():
     except Exception as e:
         logger.error(f"Failed to load initial data: {e}")
 preferences_db: Dict[str, Preferences] = {}
+
+@app.on_event("startup")
+async def add_generic_preferences():
+    for candidate_id, candidate in candidates_db.items():
+        preferences = Preferences(
+            candidate_id=candidate_id,
+            min_age=candidate.age - 5,
+            max_age=candidate.age + 5,
+            allowed_communities=[candidate.community],
+            allowed_religiosity_levels=[candidate.religiosity_level],
+            location_radius_km=50,
+            must_have={},
+            nice_to_have={},
+            free_text=""
+        )
+        preferences_db[candidate_id] = preferences
 feedback_db: List[Feedback] = []
 
 class SystemStatus(BaseModel):

@@ -1,0 +1,68 @@
+{
+  "test_timestamp": "2025-09-22 05:59:25",
+  "load_performance": {
+    "concurrency_1": {
+      "total_requests": 20,
+      "successful_requests": 20,
+      "success_rate": 100.0,
+      "total_time_seconds": 158.83983039855957,
+      "avg_response_time_ms": 7941.597378253937,
+      "median_response_time_ms": 836.6156816482544,
+      "p95_response_time_ms": 9480.235099792579,
+      "avg_matches_found": 10.0,
+      "avg_score": 0.825505585372448,
+      "throughput_requests_per_second": 0.12591300273877257
+    },
+    "concurrency_3": {
+      "total_requests": 20,
+      "successful_requests": 20,
+      "success_rate": 100.0,
+      "total_time_seconds": 16.559439182281494,
+      "avg_response_time_ms": 2357.9574823379517,
+      "median_response_time_ms": 2418.8424348831177,
+      "p95_response_time_ms": 3365.541899204254,
+      "avg_matches_found": 10.0,
+      "avg_score": 0.825505585372448,
+      "throughput_requests_per_second": 1.2077703707139966
+    },
+    "concurrency_5": {
+      "total_requests": 20,
+      "successful_requests": 20,
+      "success_rate": 100.0,
+      "total_time_seconds": 16.704699754714966,
+      "avg_response_time_ms": 3736.2969756126404,
+      "median_response_time_ms": 4121.81830406189,
+      "p95_response_time_ms": 5522.513568401337,
+      "avg_matches_found": 10.0,
+      "avg_score": 0.825505585372448,
+      "throughput_requests_per_second": 1.1972678523811793
+    },
+    "concurrency_10": {
+      "total_requests": 20,
+      "successful_requests": 20,
+      "success_rate": 100.0,
+      "total_time_seconds": 16.187137365341187,
+      "avg_response_time_ms": 6265.858066082001,
+      "median_response_time_ms": 7246.124505996704,
+      "p95_response_time_ms": 8931.38519525528,
+      "avg_matches_found": 10.0,
+      "avg_score": 0.825505585372448,
+      "throughput_requests_per_second": 1.2355489144623348
+    }
+  },
+  "algorithm_quality": {
+    "total_tested": 20,
+    "avg_score_mean": 0.838830292224884,
+    "avg_score_std": 0.03815672927958853,
+    "max_score_mean": 0.8585193634033204,
+    "max_score_std": 0.04131203949492036,
+    "avg_matches_found": 10.0,
+    "matches_found_std": 0.0,
+    "score_distribution": {
+      "excellent": 80.0,
+      "good": 20.0,
+      "fair": 0.0,
+      "poor": 0.0
+    }
+  }
+}
